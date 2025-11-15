@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Core theme tokens (Material Components) -->
+    <style name="Theme.FreshFood" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Color roles (resolve to values in colors.xml / values-night/colors.xml) -->
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/secondary_yellow</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
+
+        <item name="colorBackground">@color/background_light</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <item name="colorError">@color/status_spoiled</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorOutline">@color/divider</item>
+
+        <!-- Window styling -->
+        <item name="android:statusBarColor">@color/primary_green_dark</item>
+        <item name="android:navigationBarColor">@color/surface_white</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Use our widget defaults app-wide -->
+        <item name="materialButtonStyle">@style/Widget.FreshFood.Button</item>
+        <item name="materialCardViewStyle">@style/Widget.FreshFood.Card</item>
+    </style>
+
+    <!-- Text appearances (use theme attributes for colors so dark mode works) -->
+    <style name="TextAppearance.FreshFood.Headline" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:textSize">28sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.FreshFood.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.FreshFood.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.FreshFood.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Card widgets -->
+    <style name="Widget.FreshFood.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+    </style>
+
+    <style name="Widget.FreshFood.Card.Elevated" parent="Widget.FreshFood.Card">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!-- Button widgets -->
+    <style name="Widget.FreshFood.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+    </style>
+
+    <style name="Widget.FreshFood.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Widget.FreshFood.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+</resources>

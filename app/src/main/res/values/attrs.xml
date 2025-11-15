@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define theme color attributes to ensure resource linking when switching theme parents -->
+    <attr name="colorPrimary" format="color|reference" />
+    <attr name="colorPrimaryVariant" format="color|reference" />
+    <attr name="colorOnPrimary" format="color|reference" />
+
+    <attr name="colorSecondary" format="color|reference" />
+    <attr name="colorSecondaryVariant" format="color|reference" />
+    <attr name="colorOnSecondary" format="color|reference" />
+
+    <attr name="colorBackground" format="color|reference" />
+    <attr name="colorSurface" format="color|reference" />
+    <attr name="colorOnSurface" format="color|reference" />
+
+    <attr name="colorError" format="color|reference" />
+    <attr name="colorOnError" format="color|reference" />
+    <attr name="colorOutline" format="color|reference" />
+</resources>

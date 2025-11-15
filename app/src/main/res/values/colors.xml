@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary (Green) -->
+    <color name="primary_green">#4CAF50</color>
+    <color name="primary_green_dark">#388E3C</color>
+    <color name="primary_green_light">#81C784</color>
+
+    <!-- Secondary (Yellow) -->
+    <color name="secondary_yellow">#FFC107</color>
+    <color name="secondary_yellow_dark">#FFA000</color>
+    <color name="secondary_yellow_light">#FFD54F</color>
+
+    <!-- Status colors -->
+    <color name="status_fresh">#4CAF50</color>
+    <color name="status_ripe">#FFC107</color>
+    <color name="status_overripe">#FF9800</color>
+    <color name="status_spoiled">#F44336</color>
+
+    <!-- Neutral -->
+    <color name="background_light">#FAFAFA</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#BDBDBD</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Scrim used for overlays/scrims (e.g., scan overlay) -->
+    <color name="scrim">#4D000000</color>
+</resources>

@@ -1,0 +1,100 @@
+<resources>
+    <string name="app_name">FreshFood</string>
+    <string name="splash_loading">Initializing...</string>
+    <string name="splash_error">Initialization failed. Continuing anyway...</string>
+    <string name="splash_app_tagline">Fresh Food Quality Checker</string>
+    <string name="navigation_home">Home</string>
+    <string name="navigation_scan">Scan</string>
+    <string name="navigation_settings">Settings</string>
+    <string name="title_home">Scan History</string>
+    <string name="title_scan">Scan Food</string>
+    <string name="title_settings">Settings</string>
+    <!-- Scan screen strings -->
+    <string name="scan_capture_button">Capture</string>
+    <string name="scan_gallery_button">Gallery</string>
+    <string name="scan_permission_denied">Camera permission is required to scan food items</string>
+    <string name="scan_permission_rationale">Please grant camera permission in settings to use this feature</string>
+    <string name="scan_processing">Analyzing image...</string>
+    <string name="scan_error_camera_init">Failed to initialize camera</string>
+    <string name="scan_error_capture">Failed to capture image</string>
+    <string name="scan_error_prediction">Failed to analyze image. Please try again.</string>
+    <string name="scan_error_gallery">Failed to load image from gallery</string>
+    <string name="scan_open_settings">Open Settings</string>
+    <string name="home_empty_state_title">No scan history yet</string>
+    <string name="home_empty_state_subtitle">Scan food items to see results here</string>
+    <string name="home_toggle_view_content_description">Toggle between list and grid view</string>
+    <string name="home_item_deleted">Item deleted</string>
+    <string name="home_undo">Undo</string>
+    <string name="home_confidence_format">%d%%</string>
+    <string name="home_days_ago_format">%d days ago</string>
+    <string name="home_today">Today</string>
+    <string name="home_yesterday">Yesterday</string>
+    <string name="home_delete_confirmation">Delete this scan result?</string>
+    <!-- ResultActivity strings -->
+    <string name="result_title">Scan Result</string>
+    <string name="result_image_description">Scanned food image</string>
+    <string name="result_section_prediction">Prediction</string>
+    <string name="result_section_insights">Insights</string>
+    <string name="result_section_advice">Advice</string>
+    <string name="result_button_save">Save</string>
+    <string name="result_button_share">Share</string>
+    <string name="result_error_no_data">No result data provided</string>
+    <string name="result_confidence_format">%d%% confidence</string>
+    <string name="result_insights_dummy_note">(These are sample diagnostics generated for demonstration.)</string>
+    <string name="result_advice_default">Handle with care. Store in a cool, dry place.</string>
+    <string name="result_days_left_format">%d days left</string>
+    <string name="result_days_left_unknown">Days left unknown</string>
+    <string name="result_save_already_exists">This result is already saved</string>
+    <string name="result_save_success">Saved to history</string>
+    <string name="result_save_error">Failed to save result</string>
+    <string name="result_share_error">No app available to share results</string>
+    <!-- Settings strings -->
+    <string name="settings_model_update_title">Model Updates</string>
+    <string name="settings_model_update_desc">Keep your ML models up to date for better accuracy</string>
+    <string name="settings_check_updates">Check for Updates</string>
+    <string name="settings_current_versions">Current Model Versions:</string>
+    <string name="settings_checking_updates">Checking for updates...</string>
+    <string name="settings_downloading_model">Downloading %s...</string>
+    <string name="settings_update_success_none">All models are up to date</string>
+    <string name="settings_update_success_format">%d model(s) updated successfully</string>
+    <string name="settings_update_error_format">Update failed: %s</string>
+    <string name="settings_about_title">About</string>
+    <string name="settings_app_version_format">Version %s</string>
+    <string name="settings_developer">Kelompok 6</string>
+    <string name="settings_model_version_format">%1$s – v%2$d</string>
+    <string name="settings_loading_versions">Loading model versions...</string>
+    <!-- Help Train Model strings -->
+    <string name="settings_help_train_title">Help Train Model</string>
+    <string name="settings_help_train_desc">Contribute labeled images to improve prediction accuracy</string>
+    <string name="settings_help_train_button">Contribute Data</string>
+    <string name="settings_contribution_count_format">You\'ve contributed %d image(s)</string>
+    <string name="settings_contribution_count_none">You haven\'t contributed yet</string>
+    <!-- ContributeActivity strings -->
+    <string name="contribute_title">Contribute Training Data</string>
+    <string name="contribute_select_image">Select Image</string>
+    <string name="contribute_image_required">Please select an image</string>
+    <string name="contribute_fruit_type_label">Fruit/Food Type</string>
+    <string name="contribute_fruit_type_hint">Select type</string>
+    <string name="contribute_freshness_label">Freshness Level</string>
+    <string name="contribute_consent_text">I consent to anonymously share this image for model training</string>
+    <string name="contribute_consent_required">Please accept the consent agreement</string>
+    <string name="contribute_submit">Submit Contribution</string>
+    <string name="contribute_uploading">Uploading...</string>
+    <string name="contribute_success">Thank you! Your contribution helps improve our models.</string>
+    <string name="contribute_error_format">Upload failed: %s</string>
+    <string name="contribute_error_network">Network error. Please check your connection.</string>
+    <string name="contribute_retry">Retry</string>
+    <string name="contribute_anonymization_note">Your image will be anonymized and used solely for model training.</string>
+    <string name="contribute_validation_fruit_type">Please select a fruit/food type</string>
+    <string name="contribute_validation_freshness">Please select a freshness level</string>
+    <!-- Fruit types array -->
+    <string-array name="contribute_fruit_types">
+        <item>Apple</item>
+        <item>Avocado</item>
+        <item>Banana</item>
+        <item>Tomato</item>
+        <item>Cucumber</item>
+        <item>Leafy Greens</item>
+        <item>Bread</item>
+    </string-array>
+</resources>
