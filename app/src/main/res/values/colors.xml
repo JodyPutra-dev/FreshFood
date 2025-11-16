@@ -1,30 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary (Green) -->
-    <color name="primary_green">#4CAF50</color>
-    <color name="primary_green_dark">#388E3C</color>
-    <color name="primary_green_light">#81C784</color>
+    <!-- Primary Colors - Modern Green Palette -->
+    <color name="primary_green">#10B981</color>
+    <color name="primary_green_dark">#059669</color>
+    <color name="primary_green_light">#34D399</color>
+    <color name="primary_green_50">#ECFDF5</color>
+    <color name="primary_green_100">#D1FAE5</color>
 
-    <!-- Secondary (Yellow) -->
-    <color name="secondary_yellow">#FFC107</color>
-    <color name="secondary_yellow_dark">#FFA000</color>
-    <color name="secondary_yellow_light">#FFD54F</color>
+    <!-- Secondary Colors - Vibrant Amber -->
+    <color name="secondary_yellow">#F59E0B</color>
+    <color name="secondary_yellow_dark">#D97706</color>
+    <color name="secondary_yellow_light">#FBBF24</color>
+    <color name="secondary_yellow_50">#FFFBEB</color>
 
-    <!-- Status colors -->
-    <color name="status_fresh">#4CAF50</color>
-    <color name="status_ripe">#FFC107</color>
-    <color name="status_overripe">#FF9800</color>
-    <color name="status_spoiled">#F44336</color>
+    <!-- Accent Colors -->
+    <color name="accent_blue">#3B82F6</color>
+    <color name="accent_purple">#8B5CF6</color>
+    <color name="accent_rose">#F43F5E</color>
+    <color name="accent_teal">#14B8A6</color>
 
-    <!-- Neutral -->
-    <color name="background_light">#FAFAFA</color>
+    <!-- Status Colors - Fresh Food States -->
+    <color name="status_fresh">#10B981</color>
+    <color name="status_fresh_bg">#D1FAE5</color>
+    <color name="status_ripe">#F59E0B</color>
+    <color name="status_ripe_bg">#FEF3C7</color>
+    <color name="status_overripe">#F97316</color>
+    <color name="status_overripe_bg">#FFEDD5</color>
+    <color name="status_spoiled">#EF4444</color>
+    <color name="status_spoiled_bg">#FEE2E2</color>
+
+    <!-- Neutral Colors - Light Theme -->
+    <color name="background_light">#F9FAFB</color>
     <color name="surface_white">#FFFFFF</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="divider">#BDBDBD</color>
+    <color name="surface_elevated">#FFFFFF</color>
+    <color name="surface_variant">#F3F4F6</color>
 
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <!-- Scrim used for overlays/scrims (e.g., scan overlay) -->
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_tertiary">#9CA3AF</color>
+    <color name="text_disabled">#D1D5DB</color>
+
+    <color name="divider">#E5E7EB</color>
+    <color name="border">#D1D5DB</color>
+    <color name="border_light">#E5E7EB</color>
+
+    <!-- Overlay & Shadow Colors -->
     <color name="scrim">#4D000000</color>
+    <color name="scrim_light">#26000000</color>
+    <color name="scrim_dark">#B3000000</color>
+    <color name="shadow_light">#0A000000</color>
+    <color name="shadow_medium">#1A000000</color>
+    <color name="shadow_strong">#33000000</color>
+
+    <!-- Semantic Colors -->
+    <color name="success">#10B981</color>
+    <color name="success_bg">#D1FAE5</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_bg">#FEF3C7</color>
+    <color name="error">#EF4444</color>
+    <color name="error_bg">#FEE2E2</color>
+    <color name="info">#3B82F6</color>
+    <color name="info_bg">#DBEAFE</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#10B981</color>
+    <color name="gradient_middle">#059669</color>
+    <color name="gradient_end">#047857</color>
+
+    <!-- Base Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Add these missing dark theme colors -->
+    <color name="background_dark">#FF121212</color>
+    <color name="surface_dark">#FF1E1E1E</color>
 </resources>

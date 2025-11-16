@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,135 +8,255 @@
     android:background="?attr/colorBackground"
     tools:context=".ui.result.ResultActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:titleTextColor="?attr/colorOnPrimary"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:title="@string/result_title" />
+    <!-- App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/appbar_gradient_bg"
+        android:elevation="4dp">
 
-    <ScrollView
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="@color/white"
+            app:title="@string/result_title"
+            app:navigationIconTint="@color/white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollRoot"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="20dp">
 
+            <!-- Hero Image Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.FreshFood.Card.Elevated"
-                android:layout_marginBottom="16dp">
+                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="20dp">
 
-                <ImageView
-                    android:id="@+id/imageFood"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:scaleType="centerCrop"
-                    android:contentDescription="@string/result_image_description" />
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imageFood"
+                        android:layout_width="match_parent"
+                        android:layout_height="340dp"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/result_image_description"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- Quick Stats Row -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.FreshFood.Card"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:weightSum="2">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Confidence Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/result_section_prediction"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Title"
-                        android:layout_marginBottom="12dp" />
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    style="@style/Widget.FreshFood.Card.Filled">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:gravity="center">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Type: "
-                            android:textAppearance="@style/TextAppearance.FreshFood.Body" />
+                            android:text="Confidence"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Caption"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/textConfidence"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="32sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/colorPrimary"
+                            android:letterSpacing="-0.02"
+                            tools:text="95%" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Freshness Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.FreshFood.Card.Filled">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Status"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Caption"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/textFreshnessLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/white"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:background="@drawable/badge_fresh"
+                            tools:text="FRESH" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Prediction Details Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.FreshFood.Card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <!-- Section Title -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="20dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_analytics"
+                            android:tint="?attr/colorPrimary"
+                            android:contentDescription="Prediction"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/result_section_prediction"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Title" />
+
+                    </LinearLayout>
+
+                    <!-- Type Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp">
+
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="Food Type"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Body"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
                         <TextView
                             android:id="@+id/textFruitType"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:textAppearance="@style/TextAppearance.FreshFood.Body" />
+                            android:textAppearance="@style/TextAppearance.FreshFood.Body.Large"
+                            android:textColor="?attr/colorOnSurface"
+                            android:fontFamily="sans-serif-medium"
+                            tools:text="Apple" />
+
                     </LinearLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/colorOutline"
+                        android:alpha="0.3" />
+
+                    <!-- Confidence Bar -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Freshness: "
-                            android:textAppearance="@style/TextAppearance.FreshFood.Body" />
-                        <TextView
-                            android:id="@+id/textFreshnessLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.FreshFood.Caption"
-                            android:textColor="@color/white"
-                            android:paddingLeft="6dp"
-                            android:paddingRight="6dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp" />
-                    </LinearLayout>
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="12dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Confidence: "
-                            android:textAppearance="@style/TextAppearance.FreshFood.Body" />
-                        <TextView
-                            android:id="@+id/textConfidence"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearance.FreshFood.Body" />
-                    </LinearLayout>
+                            android:text="Accuracy Level"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Body"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:layout_marginBottom="12dp" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBarConfidence"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:max="100"
-                        android:layout_marginTop="8dp"
-                        android:progressTint="?attr/colorPrimary" />
+                        <ProgressBar
+                            android:id="@+id/progressBarConfidence"
+                            style="@style/Widget.FreshFood.ProgressBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:max="100"
+                            tools:progress="95" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Insights Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,67 +267,132 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/result_section_insights"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Title"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_lightbulb"
+                            android:tint="@color/secondary_yellow"
+                            android:contentDescription="Insights"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/result_section_insights"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Title" />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textInsights"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Caption"
+                        android:textAppearance="@style/TextAppearance.FreshFood.Body"
                         android:lineSpacingExtra="4dp"
-                        android:fontFamily="monospace" />
+                        android:fontFamily="monospace"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        tools:text="Analysis complete. Detected features indicate optimal freshness." />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Advice Card with highlighted background -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                style="@style/Widget.FreshFood.Card">
+                android:layout_marginBottom="20dp"
+                style="@style/Widget.FreshFood.Card"
+                app:cardBackgroundColor="@color/success_bg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/result_section_advice"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Title"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_info_circle"
+                            android:tint="@color/success"
+                            android:contentDescription="Advice"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/result_section_advice"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Title"
+                            android:textColor="@color/success" />
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textAdvice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Body" />
+                        android:textAppearance="@style/TextAppearance.FreshFood.Body.Large"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="Store in a cool, dry place. Best consumed within 3-5 days for optimal quality." />
 
-                    <TextView
-                        android:id="@+id/textDaysLeft"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.FreshFood.Caption"
-                        android:layout_marginTop="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="16dp"
+                        android:padding="12dp"
+                        android:background="@drawable/info_pill_bg">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_clock"
+                            android:tint="@color/success"
+                            android:contentDescription="Time"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/textDaysLeft"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.FreshFood.Body"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/success"
+                            tools:text="3-5 days remaining" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="2"
+                android:layout_marginBottom="20dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonSave"
@@ -215,7 +401,7 @@
                     android:layout_weight="1"
                     android:text="@string/result_button_save"
                     app:icon="@drawable/ic_save"
-                    app:iconGravity="start"
+                    app:iconGravity="textStart"
                     android:layout_marginEnd="8dp"
                     style="@style/Widget.FreshFood.Button" />
 
@@ -226,7 +412,7 @@
                     android:layout_weight="1"
                     android:text="@string/result_button_share"
                     app:icon="@drawable/ic_share"
-                    app:iconGravity="start"
+                    app:iconGravity="textStart"
                     style="@style/Widget.FreshFood.Button.Outlined"
                     android:layout_marginStart="8dp" />
 
@@ -234,6 +420,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

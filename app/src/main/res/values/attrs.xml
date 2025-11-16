@@ -16,4 +16,9 @@
     <attr name="colorError" format="color|reference" />
     <attr name="colorOnError" format="color|reference" />
     <attr name="colorOutline" format="color|reference" />
+
+    <!-- Custom attributes -->
+    <declare-styleable name="CustomView">
+        <attr name="borderColor" format="color|reference" />
+    </declare-styleable>
 </resources>

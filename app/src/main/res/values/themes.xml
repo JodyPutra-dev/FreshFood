@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Core theme tokens (Material Components) -->
+    <!-- Core theme with modern Material Design 3 approach -->
     <style name="Theme.FreshFood" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Color roles (resolve to values in colors.xml / values-night/colors.xml) -->
+        <!-- Enhanced color roles -->
         <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryVariant">@color/primary_green_dark</item>
         <item name="colorOnPrimary">@color/white</item>
+
         <item name="colorSecondary">@color/secondary_yellow</item>
+        <item name="colorSecondaryVariant">@color/secondary_yellow_dark</item>
         <item name="colorOnSecondary">@color/text_primary</item>
 
         <item name="colorBackground">@color/background_light</item>
@@ -19,68 +22,167 @@
         <item name="colorOnError">@color/white</item>
         <item name="colorOutline">@color/divider</item>
 
-        <!-- Window styling -->
+        <!-- Window styling with gradient status bar -->
         <item name="android:statusBarColor">@color/primary_green_dark</item>
         <item name="android:navigationBarColor">@color/surface_white</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">true</item>
 
-        <!-- Use our widget defaults app-wide -->
+        <!-- Default widget styles -->
         <item name="materialButtonStyle">@style/Widget.FreshFood.Button</item>
         <item name="materialCardViewStyle">@style/Widget.FreshFood.Card</item>
+        <item name="bottomNavigationStyle">@style/Widget.FreshFood.BottomNavigation</item>
     </style>
 
-    <!-- Text appearances (use theme attributes for colors so dark mode works) -->
+    <!-- ============================================ -->
+    <!-- TEXT APPEARANCES (Enhanced hierarchy)         -->
+    <!-- ============================================ -->
+
     <style name="TextAppearance.FreshFood.Headline" parent="TextAppearance.MaterialComponents.Headline4">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:letterSpacing">-0.01</item>
     </style>
 
     <style name="TextAppearance.FreshFood.Title" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.FreshFood.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="TextAppearance.FreshFood.Body" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:lineSpacingExtra">2dp</item>
     </style>
 
     <style name="TextAppearance.FreshFood.Caption" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 
-    <!-- Card widgets -->
+    <style name="TextAppearance.FreshFood.Overline" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="android:textSize">11sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- ============================================ -->
+    <!-- CARD WIDGETS (Modern elevated cards)         -->
+    <!-- ============================================ -->
+
     <style name="Widget.FreshFood.Card" parent="Widget.MaterialComponents.CardView">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
         <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="contentPadding">0dp</item>
     </style>
 
     <style name="Widget.FreshFood.Card.Elevated" parent="Widget.FreshFood.Card">
-        <item name="cardCornerRadius">12dp</item>
-        <item name="cardElevation">4dp</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">8dp</item>
     </style>
 
-    <!-- Button widgets -->
+    <style name="Widget.FreshFood.Card.Outlined" parent="Widget.FreshFood.Card">
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+    </style>
+
+    <!-- ============================================ -->
+    <!-- BUTTON WIDGETS (Modern with padding)         -->
+    <!-- ============================================ -->
+
     <style name="Widget.FreshFood.Button" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="elevation">2dp</item>
     </style>
 
     <style name="Widget.FreshFood.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">2dp</item>
         <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="Widget.FreshFood.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="Widget.FreshFood.Button.Icon" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+        <item name="iconPadding">8dp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <!-- ============================================ -->
+    <!-- BOTTOM NAVIGATION                            -->
+    <!-- ============================================ -->
+
+    <style name="Widget.FreshFood.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.FreshFood.Caption</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.FreshFood.Caption</item>
+        <item name="elevation">8dp</item>
+        <item name="labelVisibilityMode">labeled</item>
+    </style>
+
+    <!-- ============================================ -->
+    <!-- TOOLBAR                                      -->
+    <!-- ============================================ -->
+
+    <style name="Widget.FreshFood.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleTextAppearance">@style/TextAppearance.FreshFood.Title</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.FreshFood.Caption</item>
+        <item name="titleTextColor">?attr/colorOnPrimary</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- ============================================ -->
+    <!-- TEXT INPUT LAYOUTS                           -->
+    <!-- ============================================ -->
+
+    <style name="Widget.FreshFood.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextAppearance">@style/TextAppearance.FreshFood.Caption</item>
     </style>
 
 </resources>

@@ -1,34 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark mode color variants -->
+    <!-- Primary Colors - Adjusted for dark theme -->
+    <color name="primary_green">#34D399</color>
+    <color name="primary_green_dark">#10B981</color>
+    <color name="primary_green_light">#6EE7B7</color>
+    <color name="primary_green_50">#064E3B</color>
+    <color name="primary_green_100">#065F46</color>
 
-    <!-- Primary (Dark Green) -->
-    <color name="primary_green">#66BB6A</color>
-    <color name="primary_green_dark">#4CAF50</color>
-    <color name="primary_green_light">#81C784</color>
+    <!-- Secondary Colors - Adjusted for dark theme -->
+    <color name="secondary_yellow">#FCD34D</color>
+    <color name="secondary_yellow_dark">#F59E0B</color>
+    <color name="secondary_yellow_light">#FDE68A</color>
+    <color name="secondary_yellow_50">#78350F</color>
 
-    <!-- Secondary (Dark Yellow) -->
-    <color name="secondary_yellow">#FFD54F</color>
-    <color name="secondary_yellow_dark">#FFC107</color>
-    <color name="secondary_yellow_light">#FFE082</color>
+    <!-- Status Colors - Brighter for dark backgrounds -->
+    <color name="status_fresh">#34D399</color>
+    <color name="status_fresh_bg">#065F46</color>
+    <color name="status_ripe">#FCD34D</color>
+    <color name="status_ripe_bg">#78350F</color>
+    <color name="status_overripe">#FB923C</color>
+    <color name="status_overripe_bg">#7C2D12</color>
+    <color name="status_spoiled">#F87171</color>
+    <color name="status_spoiled_bg">#7F1D1D</color>
 
-    <!-- Status colors (kept similar for consistency) -->
-    <color name="status_fresh">#4CAF50</color>
-    <color name="status_ripe">#FFC107</color>
-    <color name="status_overripe">#FF9800</color>
-    <color name="status_spoiled">#F44336</color>
+    <!-- Neutral Colors - Dark Theme -->
+    <color name="background_light">#0F172A</color>
+    <color name="surface_white">#1E293B</color>
+    <color name="surface_elevated">#334155</color>
+    <color name="surface_variant">#1E293B</color>
 
-    <!-- Neutral (Dark) -->
-    <color name="background_light">#121212</color>
-    <color name="background_dark">#121212</color>
-    <color name="surface_white">#1E1E1E</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="text_primary">#E0E0E0</color>
-    <color name="text_secondary">#A0A0A0</color>
-    <color name="divider">#424242</color>
+    <color name="text_primary">#F1F5F9</color>
+    <color name="text_secondary">#94A3B8</color>
+    <color name="text_tertiary">#64748B</color>
+    <color name="text_disabled">#475569</color>
 
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <!-- Scrim used for overlays/scrims (e.g., scan overlay) -->
-    <color name="scrim">#4D000000</color>
+    <color name="divider">#334155</color>
+    <color name="border">#475569</color>
+    <color name="border_light">#334155</color>
+
+    <!-- Semantic Colors - Dark theme variants -->
+    <color name="success">#34D399</color>
+    <color name="success_bg">#065F46</color>
+    <color name="warning">#FCD34D</color>
+    <color name="warning_bg">#78350F</color>
+    <color name="error">#F87171</color>
+    <color name="error_bg">#7F1D1D</color>
+    <color name="info">#60A5FA</color>
+    <color name="info_bg">#1E3A8A</color>
+
+    <!-- Gradient Colors for dark theme -->
+    <color name="gradient_start">#34D399</color>
+    <color name="gradient_middle">#10B981</color>
+    <color name="gradient_end">#059669</color>
 </resources>

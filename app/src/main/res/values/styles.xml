@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Card Styles -->
+    <style name="Widget.FreshFood.Card.Filled" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <!-- Text Appearance Styles -->
+    <style name="TextAppearance.FreshFood.Body.Large" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- ProgressBar Style -->
+    <style name="Widget.FreshFood.ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">?attr/colorPrimary</item>
+        <item name="android:progressBackgroundTint">?attr/colorSurfaceVariant</item>
+    </style>
+</resources>
