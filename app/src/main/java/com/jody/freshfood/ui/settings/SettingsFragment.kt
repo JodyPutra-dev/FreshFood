@@ -16,6 +16,8 @@ import com.jody.freshfood.R
 import com.jody.freshfood.databinding.FragmentSettingsBinding
 import com.jody.freshfood.ml.UpdateStatus
 import com.jody.freshfood.ui.contribute.ContributeActivity
+// Menambahkan import untuk ConnectivityReceiver
+import com.jody.freshfood.receiver.ConnectivityReceiver
 
 class SettingsFragment : Fragment() {
 
@@ -48,12 +50,30 @@ class SettingsFragment : Fragment() {
         // load current metadata
         viewModel.loadModelMetadata(requireContext())
 
+        // =======================================================
+        // KODE BUTTON CHECK UPDATES BARU (Telah Digabungkan)
+        // =======================================================
         binding.buttonCheckUpdates.setOnClickListener {
+            // Check network first
+            if (!ConnectivityReceiver.isNetworkAvailable(requireContext())) {
+                Toast.makeText(
+                    requireContext(),
+                    "No internet connection. Update will start when network is available.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // Mark as pending
+                ConnectivityReceiver.markPendingUpdate(requireContext())
+                return@setOnClickListener
+            }
+
+            // Proceed with update
             binding.textUpdateStatus.visibility = View.GONE
             binding.progressBarUpdate.visibility = View.VISIBLE
             binding.buttonCheckUpdates.isEnabled = false
             viewModel.checkForUpdates(requireContext())
         }
+        // =======================================================
 
         binding.buttonHelpTrain.setOnClickListener {
             val intent = Intent(requireContext(), ContributeActivity::class.java)

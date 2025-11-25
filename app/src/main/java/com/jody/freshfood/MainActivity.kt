@@ -2,52 +2,40 @@ package com.jody.freshfood
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jody.freshfood.databinding.ActivityMainBinding
-import com.jody.freshfood.ui.home.HomeFragment
-import com.jody.freshfood.ui.scan.ScanFragment
-import com.jody.freshfood.ui.settings.SettingsFragment
+import com.jody.freshfood.receiver.ConnectivityReceiver
+import androidx.navigation.fragment.NavHostFragment // Diperlukan untuk perbaikan NavController
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var connectivityReceiver: ConnectivityReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setup bottom navigation listener
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_home -> {
-                    openFragment(HomeFragment(), "home")
-                    true
-                }
-                R.id.navigation_scan -> {
-                    openFragment(ScanFragment(), "scan")
-                    true
-                }
-                R.id.navigation_settings -> {
-                    openFragment(SettingsFragment(), "settings")
-                    true
-                }
-                else -> false
-            }
-        }
+        val navView: BottomNavigationView = binding.bottomNavigation
 
-        // Initialize default fragment only if first creation
-        if (savedInstanceState == null) {
-            binding.bottomNavigation.selectedItemId = R.id.navigation_home
-        }
+        // Ini mengatasi masalah timing (IllegalStateException)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        // Menghubungkan BottomNavigationView dengan NavController
+        navView.setupWithNavController(navController)
+
+        // Register ConnectivityReceiver
+        connectivityReceiver = ConnectivityReceiver.register(this)
     }
 
-    private fun openFragment(fragment: Fragment, tag: String) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(binding.fragmentContainer.id, fragment, tag)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister receiver ketika activity dihancurkan
+        ConnectivityReceiver.unregister(this, connectivityReceiver)
+        connectivityReceiver = null
     }
 }
