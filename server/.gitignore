@@ -1,0 +1,44 @@
+# Node modules
+node_modules/
+
+# Environment variables (contains secrets)
+.env
+
+# Model files (large binary files)
+models/*.tflite
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Production build files
+dist/
+build/

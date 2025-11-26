@@ -1,5 +1,6 @@
 package com.jody.freshfood.network
 
+import com.jody.freshfood.BuildConfig
 import com.jody.freshfood.network.dto.ModelManifestDto
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,14 +14,17 @@ interface ModelUpdateService {
     suspend fun getManifest(): ModelManifestDto
 
     companion object {
-        // TODO: Replace with production URL
-        private const val BASE_URL = "https://example.com/models/"
+        private const val BASE_URL = BuildConfig.MODEL_UPDATE_BASE_URL
 
         fun create(): ModelUpdateService {
+            // API key interceptor for server authentication
+            val apiKeyInterceptor = ApiKeyInterceptor(BuildConfig.MODEL_UPDATE_API_KEY)
+            
             val logging = HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BASIC
             }
             val client = OkHttpClient.Builder()
+                .addInterceptor(apiKeyInterceptor) // Add API key before logging
                 .addInterceptor(logging)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)

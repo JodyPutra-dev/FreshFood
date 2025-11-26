@@ -1,6 +1,8 @@
 package com.jody.freshfood.ml
 
 import android.content.Context
+import com.jody.freshfood.BuildConfig
+import com.jody.freshfood.network.ApiKeyInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.ResponseBody
@@ -12,7 +14,9 @@ import java.util.concurrent.TimeUnit
 
 class ModelDownloader(private val context: Context) {
 
+    // API key authentication required for model downloads
     private val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(ApiKeyInterceptor(BuildConfig.MODEL_UPDATE_API_KEY))
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(120, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
