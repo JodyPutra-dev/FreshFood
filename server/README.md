@@ -5,20 +5,18 @@ Node.js/Express server for distributing TensorFlow Lite models to the FreshFood 
 ## Overview
 
 This server provides a REST API for:
-- **Model Distribution**: Serves TFLite models to Android clients
+- **Static Model Distribution**: Serves pre-placed TFLite models to Android clients
 - **Manifest Management**: Provides version information and SHA-256 hashes
-- **Admin Uploads**: Secure endpoint for uploading new model versions
 - **Automatic Updates**: Android app can check for and download model updates
 
 ### Architecture
 
 ```
-Internet → nginx (reverse proxy, SSL/TLS) → Express Server → File System
+Internet → nginx (reverse proxy, SSL/TLS) → Express Server → Static Files (models/)
 ```
 
 The server runs behind an nginx reverse proxy that handles:
 - SSL/TLS termination
-- Rate limiting
 - Security headers
 - Static file optimization
 
@@ -60,8 +58,6 @@ npm install
 
 This will install all required packages:
 - express (web framework)
-- multer (file upload handling)
-- express-rate-limit (rate limiting)
 - helmet (security headers)
 - cors (cross-origin resource sharing)
 - morgan (HTTP request logging)
@@ -84,8 +80,7 @@ nano .env  # or use your preferred editor
 **Important**: Update the following variables:
 
 ```env
-# Generate strong API keys (32+ characters each)
-ADMIN_API_KEY=your-strong-admin-key-here
+# Generate strong API key (32+ characters)
 CLIENT_API_KEY=your-strong-client-key-here
 
 # Set your production server URL
@@ -99,9 +94,8 @@ PORT=3000
 NODE_ENV=production
 ```
 
-**Generate strong API keys** (generate separate keys for admin and client):
+**Generate strong API key**:
 ```bash
-openssl rand -hex 32  # For ADMIN_API_KEY
 openssl rand -hex 32  # For CLIENT_API_KEY (must match Android app configuration)
 ```
 
@@ -119,38 +113,28 @@ mkdir -p models
 |----------|-------------|---------|----------|
 | `PORT` | Server port | 3000 | No |
 | `NODE_ENV` | Environment mode (development/production) | development | No |
-| `ADMIN_API_KEY` | Secret key for admin uploads (/admin/*) | - | **Yes** |
 | `CLIENT_API_KEY` | API key for client downloads (/manifest.json, /models/*) | - | **Yes** |
 | `MODELS_DIR` | Models directory path | ./models | No |
 | `MANIFEST_PATH` | Manifest file path | ./models/manifest.json | No |
-| `MAX_FILE_SIZE_MB` | Max upload size in MB | 100 | No |
-| `RATE_LIMIT_WINDOW_MS` | Rate limit window (ms) | 900000 (15 min) | No |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 100 | No |
 | `ALLOWED_ORIGINS` | CORS allowed origins (comma-separated) | http://localhost:3000 | **Yes** (production) |
 | `SERVER_URL` | Public server URL | http://localhost:3000 | **Yes** (production) |
 
 ### Security Considerations
 
-#### Two-Tier API Key System
+#### Single-Tier API Key System
 
-The server implements a two-tier authentication system for enhanced security:
+The server implements a single-tier authentication system for client access:
 
-1. **ADMIN_API_KEY**: Used for `/admin/upload` endpoint (model uploads)
-   - Highly sensitive - grants ability to upload/modify models
-   - Should be kept extremely secure and rotated regularly
-   - Only known to administrators and CI/CD systems
+**CLIENT_API_KEY**: Used for `/manifest.json` and `/models/*` endpoints (model downloads)
+- Used by Android app for fetching models
+- Must match `MODEL_UPDATE_API_KEY` in Android app's BuildConfig
+- Should be kept private
+- Can be shared with all instances of the Android app
 
-2. **CLIENT_API_KEY**: Used for `/manifest.json` and `/models/*` endpoints (model downloads)
-   - Used by Android app for fetching models
-   - Must match `MODEL_UPDATE_API_KEY` in Android app's BuildConfig
-   - Less sensitive than admin key but should still be kept private
-   - Can be shared with all instances of the Android app
-
-Both keys should be:
+The key should be:
 - Generated using `openssl rand -hex 32` (produces 64-character hex string)
 - Stored in environment variables only
 - Never committed to version control
-- Different from each other
 
 #### CORS Configuration
 
@@ -165,13 +149,9 @@ For development, you can use `http://localhost:3000`, but **never use `*` in pro
 
 1. **API Key Authentication**: All model endpoints require X-API-Key header
 2. **HTTPS**: Always use HTTPS in production (configured via nginx)
-3. **Rate Limiting**: 
-   - Per-API-key: 50 requests per 15 minutes
-   - Per-IP: 100 requests per 15 minutes
-4. **File Size Limits**: Prevents disk exhaustion
-5. **SHA-256 Verification**: Ensures model integrity (matches Android ModelDownloader.kt implementation)
-6. **Nginx Header Passthrough**: X-API-Key header forwarded through reverse proxy
-7. **Timing-Safe Comparison**: Prevents timing attacks on API key validation
+3. **SHA-256 Verification**: Ensures model integrity (matches Android ModelDownloader.kt implementation)
+4. **Nginx Header Passthrough**: X-API-Key header forwarded through reverse proxy
+5. **Timing-Safe Comparison**: Prevents timing attacks on API key validation
 
 ## Running the Server
 
@@ -274,97 +254,189 @@ Downloads a specific TFLite model file.
 curl -H "X-API-Key: your-client-api-key" -O https://your-domain.com/models/fruitid.tflite
 ```
 
-**Rate Limiting**: 
-- Per API key: 50 requests per 15 minutes
-- Per IP: 100 requests per 15 minutes (secondary defense)
+## Model Management Process
 
-### Admin Endpoints (Require Admin API Key)
+### Overview
 
-#### POST /admin/upload
-
-Upload a new model version. Requires authentication via X-API-Key header with ADMIN_API_KEY.
-
-**Authentication**: X-API-Key header with ADMIN_API_KEY
-
-**Request**:
-- Method: POST
-- Content-Type: multipart/form-data
-- Body: Form field `file` with .tflite file
-
-**Process**:
-1. Validates authentication
-2. Validates file (must be .tflite)
-3. Saves file to models directory
-4. Computes SHA-256 hash
-5. Updates manifest.json:
-   - If model exists: increments version
-   - If new model: sets version to 1
-6. Returns upload status
-
-**Response**:
-```json
-{
-  "success": true,
-  "message": "Model uploaded successfully",
-  "model": {
-    "name": "fruitid",
-    "version": 3,
-    "sha256": "abc123def456...",
-    "downloadUrl": "https://your-domain.com/models/fruitid.tflite",
-    "fileSize": 5242880
-  },
-  "timestamp": "2025-11-26T10:30:00.000Z"
-}
-```
-
-**Example Request**:
-```bash
-curl -X POST \
-  -H "X-API-Key: your-api-key-here" \
-  -F "file=@fruitid.tflite" \
-  https://your-domain.com/admin/upload
-```
-
-**Error Responses**:
-- `400 Bad Request`: Invalid file or missing file
-- `401 Unauthorized`: Missing or invalid API key
-- `413 Payload Too Large`: File exceeds size limit
-- `500 Internal Server Error`: Server error
-
-## Model Upload Process
+This server uses a **manual model management workflow**. Models are not uploaded via API endpoints. Instead, you place `.tflite` files directly in the `models/` directory and generate the manifest manually using a script.
 
 ### Step-by-Step Guide
 
-1. **Prepare Model File**
-   - Ensure file has `.tflite` extension
-   - Verify file size is within limits (default: 100MB)
-   - Test model locally before uploading
+#### 1. Prepare Model File
 
-2. **Upload Model**
-   ```bash
-   curl -X POST \
-     -H "X-API-Key: your-api-key" \
-     -F "file=@path/to/model.tflite" \
-     https://your-domain.com/admin/upload
-   ```
+- Ensure file has `.tflite` extension
+- Test model locally before deployment
+- Note the model name (e.g., `fruitid.tflite`)
 
-3. **Server Actions**
-   - Computes SHA-256 hash of uploaded file
-   - Updates or creates model entry in manifest.json
-   - Increments version number automatically
+#### 2. Place Model in Directory
 
-4. **Android App Update**
-   - App periodically checks manifest.json
-   - Detects new version
-   - Downloads model if SHA-256 differs
-   - Verifies integrity before loading
-
-### Using the Upload Script
-
-A convenience script is provided:
+Copy or move your `.tflite` file to the server's `models/` directory:
 
 ```bash
-./scripts/upload-model.sh path/to/model.tflite https://your-domain.com your-api-key
+# Local development
+cp path/to/fruitid.tflite models/
+
+# Production server (via SCP)
+scp fruitid.tflite user@your-server:/path/to/server/models/
+```
+
+#### 3. Generate Manifest
+
+Run the manifest generation script:
+
+```bash
+# Basic usage
+node scripts/generate-manifest.js --server-url https://your-domain.com
+
+# Increment version for existing models
+node scripts/generate-manifest.js --server-url https://your-domain.com --increment-version
+
+# Custom output path
+node scripts/generate-manifest.js --server-url https://your-domain.com --output models/manifest.json
+```
+
+**Script Features**:
+- Automatically scans `models/` directory for all `.tflite` files
+- Calculates SHA-256 hash for each model
+- Generates `manifest.json` with proper format matching `ModelManifestDto`
+- Supports version increment (reads existing manifest and increments version if model exists)
+- Provides colored output with detailed progress information
+
+**Example Output**:
+```
+========================================
+   TFLite Manifest Generator
+========================================
+
+✔ Step 1/6: Validating server URL...
+✔ Step 2/6: Checking models directory...
+✔ Step 3/6: Scanning for .tflite files...
+  Found 1 model(s) to process
+
+✔ Step 4/6: Reading existing manifest...
+✔ Step 5/6: Generating manifest entries...
+  Processing: fruitid.tflite
+✔ Step 6/6: Writing manifest to models/manifest.json...
+
+========================================
+Manifest generated successfully!
+========================================
+
+Summary:
+- Total models: 1
+- Models: fruitid (v2, SHA256: a1b2c3d4...)
+
+Next steps:
+1. Verify manifest: node scripts/verify-manifest.js
+2. Test download: curl -H "X-API-Key: your-key" https://your-domain.com/manifest.json
+3. Restart server if running: pm2 restart freshfood-server
+```
+
+#### 4. Verify Manifest
+
+Use the verification script to ensure manifest is valid:
+
+```bash
+node scripts/verify-manifest.js
+```
+
+This script:
+- Validates JSON structure
+- Checks that all models in manifest actually exist in `models/` directory
+- Verifies SHA-256 hashes match file contents
+- Reports any discrepancies
+
+#### 5. Restart Server (if running)
+
+If server is already running, restart it to ensure manifest changes are picked up:
+
+```bash
+# Using PM2
+pm2 restart freshfood-server
+
+# Or if running directly
+npm start
+```
+
+#### 6. Test Deployment
+
+Verify the manifest is accessible:
+
+```bash
+curl -H "X-API-Key: your-client-api-key" https://your-domain.com/manifest.json
+```
+
+Download the model to test:
+
+```bash
+curl -H "X-API-Key: your-client-api-key" -O https://your-domain.com/models/fruitid.tflite
+```
+
+### Version Management
+
+**New Models**: When adding a brand new model, the script sets version to `1` by default.
+
+**Updating Existing Models**: When replacing an existing model with a new version:
+
+1. Replace the `.tflite` file in `models/` directory with the new version
+2. Run the script with `--increment-version` flag:
+   ```bash
+   node scripts/generate-manifest.js --server-url https://your-domain.com --increment-version
+   ```
+3. The script will:
+   - Read the existing manifest
+   - Detect that the model name already exists
+   - Increment the version number (e.g., v2 → v3)
+   - Calculate new SHA-256 hash
+   - Update the manifest
+
+### Android App Update Flow
+
+Once you've updated the manifest:
+
+1. **Android app periodically checks** `/manifest.json` endpoint
+2. **Compares versions**: If server version > local version, update is triggered
+3. **Downloads model**: Fetches the new `.tflite` file from `/models/:modelName.tflite`
+4. **Verifies integrity**: Calculates SHA-256 of downloaded file and compares with manifest
+5. **Loads model**: If hash matches, replaces old model with new one
+
+### Adding New Models
+
+To add a completely new model (not an update to existing):
+
+```bash
+# 1. Place the new model file
+cp path/to/newmodel.tflite models/
+
+# 2. Generate manifest (no --increment-version needed for new models)
+node scripts/generate-manifest.js --server-url https://your-domain.com
+
+# 3. Verify
+node scripts/verify-manifest.js
+
+# 4. Restart server
+pm2 restart freshfood-server
+```
+
+The manifest will now include both old and new models:
+
+```json
+{
+  "models": [
+    {
+      "name": "fruitid",
+      "version": 2,
+      "downloadUrl": "https://your-domain.com/models/fruitid.tflite",
+      "sha256": "abc123..."
+    },
+    {
+      "name": "newmodel",
+      "version": 1,
+      "downloadUrl": "https://your-domain.com/models/newmodel.tflite",
+      "sha256": "def456..."
+    }
+  ]
+}
 ```
 
 ## Deployment
@@ -407,16 +479,14 @@ A convenience script is provided:
    nano .env  # Configure production settings
    ```
 
-   **Critical**: Set both API keys in .env:
+   **Critical**: Set CLIENT_API_KEY in .env:
    ```bash
-   # Generate two separate keys
-   openssl rand -hex 32  # For ADMIN_API_KEY
+   # Generate API key
    openssl rand -hex 32  # For CLIENT_API_KEY
    ```
 
    Update .env:
    ```env
-   ADMIN_API_KEY=<generated-admin-key>
    CLIENT_API_KEY=<generated-client-key>
    ALLOWED_ORIGINS=https://your-domain.com
    SERVER_URL=https://your-domain.com
@@ -440,14 +510,21 @@ A convenience script is provided:
    pm2 startup
    ```
 
-8. **Initialize Models**
+8. **Place Initial Models**
    ```bash
-   ./scripts/init-models.sh
+   # Copy your .tflite files to models/ directory
+   cp path/to/fruitid.tflite models/
+   
+   # Generate manifest
+   node scripts/generate-manifest.js --server-url https://your-domain.com
+   
+   # Verify manifest
+   node scripts/verify-manifest.js
    ```
 
 9. **Test Deployment**
    ```bash
-   curl https://your-domain.com/manifest.json
+   curl -H "X-API-Key: your-client-api-key" https://your-domain.com/manifest.json
    curl https://your-domain.com/health
    ```
 
@@ -547,31 +624,6 @@ cat .env
 node --version  # Should be 18.x or higher
 ```
 
-### Upload Fails
-
-**Check file size**:
-```bash
-ls -lh model.tflite
-```
-
-Ensure it's under the `MAX_FILE_SIZE_MB` limit.
-
-**Verify API key**:
-```bash
-echo $ADMIN_API_KEY  # Should match .env file
-```
-
-**Check disk space**:
-```bash
-df -h
-```
-
-**Check permissions**:
-```bash
-ls -la models/
-# Ensure Node.js process can write to models directory
-```
-
 ### Android App Can't Fetch Manifest
 
 **Test manifest endpoint with API key**:
@@ -650,17 +702,24 @@ sha256sum models/fruitid.tflite
 
 # macOS alternative
 shasum -a 256 models/fruitid.tflite
+
+# Windows PowerShell
+Get-FileHash models/fruitid.tflite -Algorithm SHA256
 ```
 
 Compare with manifest.json entry.
 
 **Regenerate manifest**:
 ```bash
-node scripts/verify-manifest.js --fix
+# Regenerate from scratch
+node scripts/generate-manifest.js --server-url https://your-domain.com
+
+# Verify correctness
+node scripts/verify-manifest.js
 ```
 
 **Check file corruption**:
-Re-upload the model file if hash doesn't match.
+If hash still doesn't match, the file may be corrupted. Replace the `.tflite` file and regenerate manifest.
 
 ### Rate Limit Errors (429)
 
@@ -697,10 +756,15 @@ npm audit fix
 
 ### Rotate API Key
 
+To rotate CLIENT_API_KEY:
+
 1. Generate new key: `openssl rand -hex 32`
-2. Update `.env` file
+2. Update server `.env` file with new CLIENT_API_KEY
 3. Restart server: `pm2 restart freshfood-server`
-4. Update API key in upload scripts/tools
+4. Update CLIENT_API_KEY in Android app (`gradle.properties` or `local.properties`)
+5. Rebuild and redeploy Android app
+
+**Note**: All Android app users will need to update to the new app version to continue receiving model updates.
 
 ### Backup Manifest
 
@@ -721,6 +785,11 @@ ls -lt models/*.tflite
 
 # Remove specific old version
 rm models/fruitid_v1.tflite
+```
+
+After removing old models, regenerate the manifest:
+```bash
+node scripts/generate-manifest.js --server-url https://your-domain.com
 ```
 
 **Note**: Only the latest version needs to be kept unless you support rollbacks.
@@ -802,9 +871,11 @@ Example: `a1b2c3d4e5f6...` (64 chars total)
 
 ### Concurrent Users
 
-With default rate limiting (100 req/15min):
-- ~400 users per hour per IP
-- Scale up rate limits or use load balancer for higher traffic
+The system supports unlimited concurrent users (limited only by server resources and network bandwidth):
+- No per-API-key or per-IP rate limits
+- All users share the same CLIENT_API_KEY embedded in the APK
+- Scale horizontally with load balancer for higher traffic
+- Monitor server CPU, memory, and network usage to determine capacity
 
 ## Security Considerations
 
@@ -824,17 +895,7 @@ With default rate limiting (100 req/15min):
    - Prevents man-in-the-middle attacks
    - Ensures model integrity
 
-4. **Rate Limiting**
-   - Prevents abuse and DoS attacks
-   - Configurable per endpoint
-   - Monitor for unusual patterns
-
-5. **File Size Limits**
-   - Prevents disk exhaustion
-   - Default: 100MB per upload
-   - Adjust based on model sizes
-
-6. **Input Validation**
+4. **Input Validation**
    - Model names sanitized (alphanumeric, underscores, hyphens)
    - File extensions validated
    - Prevents directory traversal attacks

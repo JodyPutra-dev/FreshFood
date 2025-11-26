@@ -1,46 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs').promises;
 const { verifyClientApiKey } = require('../middleware/auth');
-
-// Per-API-key rate limiter (stricter limits)
-const apiKeyLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000, // 15 minutes
-  max: 50, // Stricter limit: 50 requests per 15 minutes per API key
-  keyGenerator: (req) => {
-    // Use API key as rate limit key, fallback to IP
-    return req.headers['x-api-key'] || req.ip;
-  },
-  message: {
-    error: 'Too Many Requests',
-    message: 'Rate limit exceeded for this API key. Please try again later.',
-    timestamp: new Date().toISOString()
-  },
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
-// IP-based rate limiter (secondary defense)
-const ipLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-  message: {
-    error: 'Too Many Requests',
-    message: 'Rate limit exceeded. Please try again later.',
-    timestamp: new Date().toISOString()
-  },
-  standardHeaders: true,
-  legacyHeaders: false
-});
 
 /**
  * GET /manifest.json
  * Returns the model manifest matching ModelManifestDto structure
  * Requires client API key authentication
  */
-router.get('/manifest.json', verifyClientApiKey, apiKeyLimiter, ipLimiter, async (req, res, next) => {
+router.get('/manifest.json', verifyClientApiKey, async (req, res, next) => {
   try {
     const manifestPath = path.join(__dirname, '../..', process.env.MANIFEST_PATH || 'models/manifest.json');
     
@@ -80,7 +49,7 @@ router.get('/manifest.json', verifyClientApiKey, apiKeyLimiter, ipLimiter, async
  * Downloads a specific model file
  * Requires client API key authentication
  */
-router.get('/models/:modelName.tflite', verifyClientApiKey, apiKeyLimiter, ipLimiter, async (req, res, next) => {
+router.get('/models/:modelName.tflite', verifyClientApiKey, async (req, res, next) => {
   try {
     const { modelName } = req.params;
     

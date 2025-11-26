@@ -199,10 +199,6 @@ CLIENT_API_KEY=<your-64-char-client-key>
 # CORS Configuration
 ALLOWED_ORIGINS=https://your-domain.com
 
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=50
-
 # File Upload
 MAX_FILE_SIZE_MB=100
 MANIFEST_PATH=./models/manifest.json
@@ -988,7 +984,6 @@ Before going live, verify all security measures:
 - [ ] Firewall configured (UFW enabled, ports 22/80/443 allowed)
 - [ ] SSH key authentication enabled, password auth disabled
 - [ ] Non-root user created for server operations
-- [ ] Rate limiting enabled (50 req/15min per API key, 100 req/15min per IP)
 - [ ] CORS configured with specific origins (not `*` wildcard)
 - [ ] nginx security headers enabled (HSTS, CSP, X-Frame-Options, X-Content-Type-Options)
 - [ ] Android app uses release signing key (not debug key)

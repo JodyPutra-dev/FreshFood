@@ -696,53 +696,6 @@ This guide provides solutions for common issues in the FreshFood OTA (Over-The-A
 
 ## Network Issues
 
-### Issue: Rate Limit Errors (429 Too Many Requests)
-
-**Symptoms**:
-- Requests fail with 429 status code
-- "Too many requests" error message
-- Occurs after multiple update checks
-
-**Possible Causes**:
-- Exceeded rate limit (default: 50 req/15min per API key, 100 req/15min per IP)
-- App polling too frequently
-- Multiple devices using same API key
-
-**Solutions**:
-
-1. **Wait for rate limit window to reset**:
-   - Default: 15 minutes
-   - Check `Retry-After` header in response
-
-2. **Increase rate limits in server `.env`**:
-   ```env
-   RATE_LIMIT_MAX_REQUESTS=200
-   RATE_LIMIT_WINDOW_MS=900000  # 15 minutes
-   ```
-   
-   Restart server: `pm2 restart freshfood-server`
-
-3. **Check if app polling too frequently**:
-   - Updates should be hourly or on-demand (not continuous)
-   - Check for infinite loops in update code
-
-4. **Verify rate limit configuration**:
-   - Check `server/src/middleware/auth.js` (IP limiter)
-   - Check `server/src/routes/models.js` (API key limiter)
-
-5. **Use different API key for testing**:
-   - Generate separate testing API key
-   - Use different IP address
-
-6. **Monitor rate limit headers**:
-   ```bash
-   curl -v -H "X-API-Key: your-key" https://your-domain.com/manifest.json
-   ```
-   
-   Look for `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset` headers.
-
----
-
 ### Issue: Slow Model Downloads
 
 **Symptoms**:

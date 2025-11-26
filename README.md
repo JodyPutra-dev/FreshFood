@@ -91,12 +91,10 @@ sequenceDiagram
 - **Model Storage** - File system storage with SHA-256 hashing
 - **Manifest Management** - JSON-based model metadata with version tracking
 - **Authentication** - Two-tier API key system (admin/client) with timing-safe comparison
-- **Rate Limiting** - Per-API-key (50 req/15min) and per-IP (100 req/15min) limits
 
 **nginx Reverse Proxy**
 - **SSL/TLS Termination** - HTTPS with Let's Encrypt certificates
 - **Security Headers** - HSTS, CSP, X-Frame-Options, X-Content-Type-Options
-- **Rate Limiting** - 10 req/s with burst capacity
 - **Header Forwarding** - X-API-Key passthrough for authentication
 
 ## Quick Start
@@ -180,7 +178,7 @@ FreshFood/
 ├── server/                       # Node.js/Express server
 │   ├── src/
 │   │   ├── routes/               # API route handlers
-│   │   ├── middleware/           # Authentication, rate limiting
+│   │   ├── middleware/           # Authentication
 │   │   └── utils/                # Hashing, manifest management
 │   ├── models/                   # TFLite model storage
 │   ├── scripts/                  # Upload, init, verify scripts
@@ -217,9 +215,10 @@ FreshFood implements multiple layers of security to protect model integrity and 
 - 🔒 **HTTPS Enforcement** - All production traffic encrypted with TLS 1.2/1.3
 - ✅ **SHA-256 Model Verification** - Every model download verified against cryptographic hash
 - ⏱️ **Timing-Safe Comparison** - API key validation resistant to timing attacks
-- 🚦 **Rate Limiting** - Multi-layer protection (per-API-key and per-IP)
 - 🛡️ **Security Headers** - HSTS, CSP, X-Frame-Options, X-Content-Type-Options
 - 🌐 **CORS Restrictions** - Configurable origin whitelist
+
+**Note**: The system uses a single shared API key for all app users, suitable for a public mobile app distribution model. Security relies on API key secrecy and HTTPS without per-user or per-IP rate limiting.
 
 For security best practices and API key management, see [server/README.md](server/README.md#security-considerations).
 

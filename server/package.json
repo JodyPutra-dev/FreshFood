@@ -1,7 +1,7 @@
 {
   "name": "freshfood-model-server",
   "version": "1.0.0",
-  "description": "TFLite model distribution server for FreshFood Android app",
+  "description": "Static TFLite model distribution server for FreshFood Android app",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -17,8 +17,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "multer": "^1.4.5-lts.1",
-    "express-rate-limit": "^6.11.2",
     "helmet": "^7.1.0",
     "cors": "^2.8.5",
     "morgan": "^1.10.0",

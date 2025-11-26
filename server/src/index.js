@@ -7,7 +7,6 @@ const path = require('path');
 
 // Import routes
 const modelsRouter = require('./routes/models');
-const adminRouter = require('./routes/admin');
 
 // Initialize Express app
 const app = express();
@@ -47,7 +46,6 @@ app.use('/models', express.static(modelsDir, {
 
 // Mount routes
 app.use('/', modelsRouter);
-app.use('/admin', adminRouter);
 
 // 404 handler for undefined routes
 app.use((req, res) => {

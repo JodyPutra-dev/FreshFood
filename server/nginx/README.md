@@ -323,14 +323,6 @@ if ($request_method !~ ^(GET|POST|HEAD)$ ) {
 }
 ```
 
-### 7. Implement Rate Limiting
-
-Already configured in nginx.conf with:
-- 10 requests per second base rate
-- 20 request burst capacity
-
-Adjust as needed based on your traffic patterns.
-
 ## Performance Tuning
 
 ### Worker Processes
