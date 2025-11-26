@@ -1,0 +1,9 @@
+freshapples
+freshbanana
+freshoranges
+rottenapples
+rottenbanana
+rottenoranges
+unripe apple
+unripe banana
+unripe orange
