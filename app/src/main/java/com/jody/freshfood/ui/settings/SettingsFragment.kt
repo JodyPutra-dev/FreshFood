@@ -49,6 +49,9 @@ class SettingsFragment : Fragment() {
 
         // load current metadata
         viewModel.loadModelMetadata(requireContext())
+        
+        // load supported foods
+        viewModel.loadSupportedFoods(requireContext())
 
         // =======================================================
         // KODE BUTTON CHECK UPDATES BARU (Telah Digabungkan)
@@ -130,6 +133,19 @@ class SettingsFragment : Fragment() {
                     sb.append("${m.modelName} – v${m.version}\n")
                 }
                 binding.textModelVersions.text = sb.toString().trim()
+            }
+        })
+
+        viewModel.supportedFoods.observe(viewLifecycleOwner, Observer { list ->
+            if (list.isNullOrEmpty()) {
+                binding.textSupportedFoodsList.text = getString(R.string.settings_no_foods)
+            } else {
+                val sb = StringBuilder()
+                for (food in list) {
+                    val states = food.ripenessStates.joinToString(", ")
+                    sb.append("• ${food.fruitName} ($states)\n")
+                }
+                binding.textSupportedFoodsList.text = sb.toString().trim()
             }
         })
     }

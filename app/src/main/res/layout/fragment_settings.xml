@@ -53,6 +53,54 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Supported Foods Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_supported_foods"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:paddingBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_food"
+                    android:layout_marginBottom="8dp"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/textSupportedFoodsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_supported_foods_subtitle"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:gravity="center"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/textSupportedFoodsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_loading_foods"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:gravity="start" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Model Updates Section -->
         <TextView
             android:layout_width="match_parent"
