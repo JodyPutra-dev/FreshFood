@@ -3,6 +3,7 @@ package com.jody.freshfood.ui.result
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -34,8 +35,28 @@ class ResultActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        scanResult = intent.getParcelableExtra("SCAN_RESULT")
+        // Reconstruct ScanResult from primitive Intent extras
+        val freshnessLabel = intent.getStringExtra("FRESHNESS_LABEL") ?: ""
+        val confidence = intent.getFloatExtra("CONFIDENCE", 0f)
+        val imagePath = intent.getStringExtra("IMAGE_PATH") ?: ""
+        val insights = intent.getStringExtra("INSIGHTS") ?: ""
+        val advice = intent.getStringExtra("ADVICE") // nullable, no default
+        val daysLeftRaw = intent.getIntExtra("DAYS_LEFT", -1)
+        val daysLeft = if (daysLeftRaw == -1) null else daysLeftRaw
+        
+        scanResult = ScanResult(
+            freshnessLabel = freshnessLabel,
+            confidence = confidence,
+            imagePath = imagePath,
+            insights = insights,
+            advice = advice,
+            daysLeft = daysLeft
+        )
+        
+        Log.d("ResultActivity", "Reconstructed ScanResult from primitives: $scanResult")
+        
         if (scanResult == null) {
+            Log.e("ResultActivity", "ScanResult reconstruction failed! Intent extras: ${intent.extras?.keySet()?.joinToString()}, values: freshnessLabel=$freshnessLabel, confidence=$confidence")
             Toast.makeText(this, getString(R.string.result_error_no_data), Toast.LENGTH_LONG).show()
             finish()
             return
@@ -70,7 +91,7 @@ class ResultActivity : AppCompatActivity() {
             binding.imageFood.setImageResource(R.mipmap.ic_launcher)
         }
 
-        binding.textFruitType.text = item.fruitType.replaceFirstChar { it.uppercaseChar() }
+        binding.textFruitType.text = item.freshnessLabel.replaceFirstChar { it.uppercaseChar() }
 
         // Badge background selection
         val label = item.freshnessLabel.lowercase()
@@ -91,19 +112,19 @@ class ResultActivity : AppCompatActivity() {
 
         // Insights are provided in the UI model
         binding.textInsights.text = item.insights.ifEmpty { getString(R.string.result_insights_dummy_note) }
-
-        binding.textAdvice.text = item.advice ?: getString(R.string.result_advice_default)
-        binding.textDaysLeft.text = if (item.daysLeft != null) String.format(getString(R.string.result_days_left_format), item.daysLeft) else getString(R.string.result_days_left_unknown)
     }
 
 
     private fun saveToHistory(item: ScanResult) {
+        Log.d("ResultActivity", "saveToHistory called with: $item")
         binding.buttonSave.isEnabled = false
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val repo = ScanRepository(this@ResultActivity)
                 val entity = item.toEntity()
-                repo.insertScanResult(entity)
+                Log.d("ResultActivity", "Entity to save: $entity")
+                val insertedId = repo.insertScanResult(entity)
+                Log.d("ResultActivity", "Saved to database with ID: $insertedId")
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@ResultActivity, getString(R.string.result_save_success), Toast.LENGTH_SHORT).show()
                 }
@@ -122,10 +143,8 @@ class ResultActivity : AppCompatActivity() {
         val file = File(item.imagePath)
         val shareText = StringBuilder().apply {
             append("FreshFood Scan Result\n")
-            append("Type: ${item.fruitType}\n")
             append("Freshness: ${item.freshnessLabel}\n")
             append("Confidence: ${(item.confidence.coerceIn(0f,1f)*100).toInt()}%\n")
-            append("Advice: ${item.advice ?: getString(R.string.result_advice_default)}\n")
         }.toString()
 
         val sendIntent = Intent().apply {

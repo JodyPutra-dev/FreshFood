@@ -9,13 +9,12 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(
     tableName = "scan_results",
-    indices = [Index(value = ["scanDate"]), Index(value = ["fruitType"])],
+    indices = [Index(value = ["scanDate"])],
 )
 data class ScanResultEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val imagePath: String,
-    val fruitType: String,
     val freshnessLabel: String,
     val confidence: Float,
     val scanDate: Long,

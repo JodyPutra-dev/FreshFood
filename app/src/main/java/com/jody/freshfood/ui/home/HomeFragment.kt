@@ -56,6 +56,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        android.util.Log.d("HomeFragment", "onViewCreated called")
+
         val repository = ScanRepository(requireContext())
         val factory = HomeViewModel.Factory(repository)
         viewModel = ViewModelProvider(this, factory).get(HomeViewModel::class.java)
@@ -71,24 +73,26 @@ class HomeFragment : Fragment() {
 
         // Observe data
         viewModel.scanHistory.observe(viewLifecycleOwner) { list ->
+            android.util.Log.d("HomeFragment", "scanHistory observer triggered with ${list.size} items")
             adapter?.submitList(list)
             val empty = list.isNullOrEmpty()
             binding.textEmptyState.visibility = if (empty) View.VISIBLE else View.GONE
             binding.textEmptySubtitle.visibility = if (empty) View.VISIBLE else View.GONE
         }
 
-        // Item click -> ResultActivity (to be created later)
+        // Item click -> ResultActivity
         adapter?.setOnItemClickListener { item ->
             // Convert entity -> UI ScanResult and include generated insights
-            val insights = buildString {
-                append("HSV Hue: ${Random.nextInt(0, 360)}°\n")
-                append("Saturation: ${Random.nextInt(40, 100)}%\n")
-                append("Spot Ratio: ${Random.nextInt(5, 30)}%\n")
-                append("Edge Density: ${Random.nextInt(10, 50)}%\n")
-            }
+            val insights = "Analyzed using TFLite model"
             val converted: ScanResult = item.toScanResult(insights)
-            val intent = Intent(requireContext(), Class.forName("com.jody.freshfood.ResultActivity"))
-            intent.putExtra("SCAN_RESULT", converted)
+            val intent = Intent(requireContext(), com.jody.freshfood.ui.result.ResultActivity::class.java)
+            intent.putExtra("FRESHNESS_LABEL", converted.freshnessLabel)
+            intent.putExtra("CONFIDENCE", converted.confidence)
+            intent.putExtra("IMAGE_PATH", converted.imagePath)
+            intent.putExtra("INSIGHTS", converted.insights)
+            intent.putExtra("ADVICE", converted.advice)
+            val daysLeft = converted.daysLeft ?: -1
+            intent.putExtra("DAYS_LEFT", daysLeft)
             startActivity(intent)
         }
 
@@ -119,6 +123,12 @@ class HomeFragment : Fragment() {
 
         ItemTouchHelper(touchHelperCallback).attachToRecyclerView(binding.recyclerViewHistory)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        android.util.Log.d("HomeFragment", "onResume called - refreshing history")
+        viewModel.refreshHistory()
     }
 
     private fun toggleLayout() {

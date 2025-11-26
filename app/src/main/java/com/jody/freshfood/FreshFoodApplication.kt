@@ -16,6 +16,8 @@ class FreshFoodApplication : Application() {
             try {
                 // initialize Room database (lazy singletons will be created)
                 FreshFoodDatabase.getDatabase(applicationContext)
+                // Clear old bundled model metadata (models now come from server)
+                ModelManager.clearAllMetadata(applicationContext)
                 // initialize ML models (copy assets to internal storage if needed)
                 ModelManager.initialize(applicationContext)
                 Log.i("FreshFoodApp", "Initialization complete")

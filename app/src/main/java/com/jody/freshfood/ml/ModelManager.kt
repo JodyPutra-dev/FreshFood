@@ -9,13 +9,9 @@ import java.security.MessageDigest
 object ModelManager {
     private const val TAG = "ModelManager"
     private const val PREFS = "freshfood_models"
+    private const val MODEL_NAME = "fruit_ripeness_model"
 
-    private val bundledModels = listOf(
-        "fruitid.tflite",
-        "apple_ripeness.tflite",
-        "avocado_ripeness.tflite",
-        "bread_ripeness.tflite"
-    )
+    private val bundledModels = emptyList<String>()
 
     @Synchronized
     fun initialize(context: Context) {
@@ -83,9 +79,41 @@ object ModelManager {
         return File(modelsDir, "$modelName.tflite")
     }
 
-    fun getPredictor(): TFLitePredictor {
-        // For now return dummy predictor. Swap with real implementation later.
-        return DummyTFLitePredictor()
+    /**
+     * Get TFLite predictor with OTA model priority.
+     * Downloaded models override bundled assets with automatic fallback.
+     * 
+     * @param context Application context for accessing model files
+     * @return TFLitePredictor instance using best available model
+     */
+    fun getPredictor(context: Context): TFLitePredictor {
+        val metadata = getModelMetadata(context, MODEL_NAME)
+        val modelFile = getModelFile(context, MODEL_NAME)
+        
+        return if (metadata != null && modelFile.exists()) {
+            Log.i(TAG, "Using downloaded model v${metadata.version}: ${modelFile.absolutePath}")
+            RealTFLitePredictor(context, modelFile.absolutePath)
+        } else {
+            Log.i(TAG, "Using bundled asset model")
+            RealTFLitePredictor(context)
+        }
+    }
+
+    /**
+     * Get human-readable info about the active model.
+     * 
+     * @param context Application context
+     * @return String like "Model: fruit_ripeness_model v2 (OTA)" or "Model: bundled asset"
+     */
+    fun getActiveModelInfo(context: Context): String {
+        val metadata = getModelMetadata(context, MODEL_NAME)
+        val modelFile = getModelFile(context, MODEL_NAME)
+        
+        return if (metadata != null && modelFile.exists()) {
+            "Model: ${metadata.modelName} v${metadata.version} (OTA)"
+        } else {
+            "Model: bundled asset"
+        }
     }
 
     /**
@@ -116,5 +144,14 @@ object ModelManager {
             }
         }
         return out
+    }
+
+    /**
+     * Clear all stored model metadata. Call this when models are fully managed by server.
+     */
+    fun clearAllMetadata(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+        Log.i(TAG, "Cleared all model metadata")
     }
 }

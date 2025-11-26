@@ -17,7 +17,9 @@ class HomeViewModel(private val repository: ScanRepository) : ViewModel() {
 
     fun refreshHistory() {
         viewModelScope.launch(Dispatchers.IO) {
+            android.util.Log.d("HomeViewModel", "refreshHistory: Fetching all scan results from database...")
             val list = repository.getAllScanResults()
+            android.util.Log.d("HomeViewModel", "refreshHistory: Retrieved ${list.size} items: $list")
             _scanHistory.postValue(list)
         }
     }

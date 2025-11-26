@@ -40,6 +40,8 @@
     <string name="scan_error_prediction">Failed to analyze image. Please try again.</string>
     <string name="scan_error_gallery">Failed to load image from gallery</string>
     <string name="scan_open_settings">Open Settings</string>
+    <string name="scan_flash_on">Flash On</string>
+    <string name="scan_flash_off">Flash Off</string>
 
     <!-- Result Activity -->
     <string name="result_title">Analysis Results</string>
@@ -64,8 +66,8 @@
     <string name="settings_app_info">App Information</string>
     <string name="settings_app_version_format">Version %s</string>
     <string name="settings_model_updates">Model Updates</string>
-    <string name="settings_current_models">Current Models:</string>
-    <string name="settings_loading_versions">Loading versions…</string>
+    <string name="settings_current_models">Installed Models:</string>
+    <string name="settings_loading_versions">Loading model versions…</string>
     <string name="settings_check_updates">Check for Updates</string>
     <string name="settings_checking_updates">Checking for updates…</string>
     <string name="settings_downloading_model">Downloading %s…</string>

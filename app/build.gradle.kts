@@ -27,13 +27,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            // Development/staging URLs for local testing
-            buildConfigField("String", "MODEL_UPDATE_BASE_URL", "\"http://10.0.2.2:3000/models/\"")
-            buildConfigField("String", "CONTRIBUTE_BASE_URL", "\"http://10.0.2.2:3000/api/\"")
-            // Debug API key for local testing
-            buildConfigField("String", "MODEL_UPDATE_API_KEY", "\"debug-api-key-for-local-testing\"")
-        }
         release {
             isMinifyEnabled = false
             proguardFiles(

@@ -54,7 +54,7 @@ class ScanHistoryAdapter : ListAdapter<ScanResultEntity, ScanHistoryAdapter.Scan
         }
 
         fun bind(item: ScanResultEntity) {
-            binding.textFruitType.text = item.fruitType.replaceFirstChar { it.uppercaseChar() }
+            binding.textFruitType.text = item.freshnessLabel.replaceFirstChar { it.uppercaseChar() }
             binding.textFreshnessLabel.text = item.freshnessLabel
             binding.textConfidence.text = String.format(binding.root.context.getString(R.string.home_confidence_format), (item.confidence * 100).toInt())
             binding.textScanDate.text = formatRelative(item.scanDate)

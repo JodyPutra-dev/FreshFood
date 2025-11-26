@@ -78,14 +78,6 @@ class SettingsFragment : Fragment() {
         }
         // =======================================================
 
-        binding.buttonHelpTrain.setOnClickListener {
-            val intent = Intent(requireContext(), ContributeActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Load contribution count
-        loadContributionCount()
-
         viewModel.updateStatus.observe(viewLifecycleOwner, Observer { status ->
             when (status) {
                 is UpdateStatus.Idle -> {
@@ -148,21 +140,6 @@ class SettingsFragment : Fragment() {
                 binding.textSupportedFoodsList.text = sb.toString().trim()
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadContributionCount()
-    }
-
-    private fun loadContributionCount() {
-        val prefs = requireContext().getSharedPreferences("FreshFoodPrefs", Context.MODE_PRIVATE)
-        val count = prefs.getInt("contribution_count", 0)
-        binding.textContributionCount.text = if (count == 0) {
-            getString(R.string.settings_contribution_count_none)
-        } else {
-            getString(R.string.settings_contribution_count_format, count)
-        }
     }
 
     override fun onDestroyView() {

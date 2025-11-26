@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.jody.freshfood.data.local.dao.ScanResultDao
 import com.jody.freshfood.data.local.entity.ScanResultEntity
 
-@Database(entities = [ScanResultEntity::class], version = 1, exportSchema = false)
+@Database(entities = [ScanResultEntity::class], version = 2, exportSchema = false)
 abstract class FreshFoodDatabase : RoomDatabase() {
     abstract fun scanResultDao(): ScanResultDao
 
@@ -21,7 +21,9 @@ abstract class FreshFoodDatabase : RoomDatabase() {
                     context.applicationContext,
                     FreshFoodDatabase::class.java,
                     "freshfood_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration() // Clear old data when schema changes
+                .build()
                 INSTANCE = instance
                 instance
             }

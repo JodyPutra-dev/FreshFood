@@ -22,13 +22,13 @@ import androidx.core.content.PermissionChecker
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.CameraController
 import androidx.camera.view.PreviewView
 import com.google.android.material.snackbar.Snackbar
+import com.jody.freshfood.ui.result.ResultActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -45,8 +45,8 @@ class ScanFragment : Fragment() {
 
     private var _binding: FragmentScanBinding? = null
     private val binding get() = _binding!!
-    private var cameraProvider: ProcessCameraProvider? = null
-    private var imageCapture: ImageCapture? = null
+    private var cameraController: LifecycleCameraController? = null
+    private var isFlashEnabled = false
     private val viewModel: ScanViewModel by viewModels()
     private lateinit var cameraExecutor: ExecutorService
 
@@ -72,7 +72,8 @@ class ScanFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        cameraProvider?.unbindAll()
+        cameraController?.unbind()
+        cameraController = null
         cameraExecutor.shutdown()
         _binding = null
     }
@@ -89,6 +90,7 @@ class ScanFragment : Fragment() {
 
         binding.fabCapture.setOnClickListener { captureImage() }
         binding.fabGallery.setOnClickListener { pickImage.launch("image/*") }
+        binding.fabFlashToggle.setOnClickListener { toggleFlash() }
 
         viewModel.predictionResult.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -106,16 +108,17 @@ class ScanFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.fabCapture.isEnabled = true
                     binding.fabGallery.isEnabled = true
-                    // Navigate to ResultActivity (external); start via explicit intent
-                    try {
-                        val intent = Intent(requireContext(), Class.forName("com.jody.freshfood.ResultActivity"))
-                        // state.scanResult is now a UI-friendly ScanResult Parcelable
-                        intent.putExtra("SCAN_RESULT", state.scanResult)
-                        startActivity(intent)
-                    } catch (ex: ClassNotFoundException) {
-                        // Activity not present yet - just log and stay
-                        Log.w("ScanFragment", "ResultActivity not found: ${ex.message}")
-                    }
+                    // Navigate to ResultActivity
+                    val intent = Intent(requireContext(), ResultActivity::class.java)
+                    // Pass ScanResult as primitive extras to avoid Knox Parcelable issues
+                    intent.putExtra("FRESHNESS_LABEL", state.scanResult.freshnessLabel)
+                    intent.putExtra("CONFIDENCE", state.scanResult.confidence)
+                    intent.putExtra("IMAGE_PATH", state.scanResult.imagePath)
+                    intent.putExtra("INSIGHTS", state.scanResult.insights)
+                    intent.putExtra("ADVICE", state.scanResult.advice)
+                    intent.putExtra("DAYS_LEFT", state.scanResult.daysLeft ?: -1)
+                    Log.d("ScanFragment", "Launching ResultActivity with primitives: ${state.scanResult}")
+                    startActivity(intent)
                     viewModel.reset()
                 }
                 is PredictionState.Error -> {
@@ -141,42 +144,53 @@ class ScanFragment : Fragment() {
     }
 
     private fun startCamera() {
-        val ctx = requireContext()
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-        cameraProviderFuture.addListener({
-            cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.previewView.surfaceProvider)
-            }
+        try {
+            val controller = LifecycleCameraController(requireContext())
+            controller.cameraSelector = androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
+            controller.setImageCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            
+            binding.previewView.controller = controller
+            controller.bindToLifecycle(viewLifecycleOwner)
+            controller.enableTorch(false)
+            
+            cameraController = controller
+        } catch (ex: Exception) {
+            Log.e("ScanFragment", "Camera init failed", ex)
+            Snackbar.make(binding.root, getString(R.string.scan_error_camera_init), Snackbar.LENGTH_LONG).show()
+        }
+    }
 
-            imageCapture = ImageCapture.Builder()
-                .setTargetRotation(binding.previewView.display.rotation)
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .build()
-
-            try {
-                cameraProvider?.unbindAll()
-                cameraProvider?.bindToLifecycle(viewLifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
-            } catch (ex: Exception) {
-                Log.e("ScanFragment", "Camera init failed", ex)
-                Snackbar.make(binding.root, getString(R.string.scan_error_camera_init), Snackbar.LENGTH_LONG).show()
-            }
-
-        }, ContextCompat.getMainExecutor(ctx))
+    private fun toggleFlash() {
+        val controller = cameraController ?: return
+        
+        if (controller.cameraInfo?.hasFlashUnit() == false) {
+            Snackbar.make(binding.root, "Flash not available", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+        
+        isFlashEnabled = !isFlashEnabled
+        controller.enableTorch(isFlashEnabled)
+        
+        binding.fabFlashToggle.setImageResource(
+            if (isFlashEnabled) R.drawable.ic_flash_on else R.drawable.ic_flash_off
+        )
+        binding.fabFlashToggle.contentDescription = getString(
+            if (isFlashEnabled) R.string.scan_flash_on else R.string.scan_flash_off
+        )
     }
 
     private fun captureImage() {
-        val imageCapture = imageCapture ?: return
+        val controller = cameraController ?: return
         val file = createImageFile(requireContext())
         val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
 
-        imageCapture.takePicture(outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+        controller.takePicture(outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                 // compress/resize and process
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
                         val compressed = compressImageTo(file, 1024)
-                        viewModel.processScanImage(compressed.absolutePath)
+                        viewModel.processScanImage(compressed.absolutePath, requireActivity().applicationContext)
                     } catch (ex: Exception) {
                         lifecycleScope.launch(Dispatchers.Main) {
                             Snackbar.make(binding.root, getString(R.string.scan_error_capture), Snackbar.LENGTH_LONG).show()
@@ -199,7 +213,7 @@ class ScanFragment : Fragment() {
             try {
                 val file = copyUriToCache(requireContext(), uri)
                 val compressed = compressImageTo(file, 1024)
-                viewModel.processScanImage(compressed.absolutePath)
+                viewModel.processScanImage(compressed.absolutePath, requireActivity().applicationContext)
             } catch (ex: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     Snackbar.make(binding.root, getString(R.string.scan_error_gallery), Snackbar.LENGTH_LONG).show()
@@ -234,14 +248,24 @@ class ScanFragment : Fragment() {
 
         val opts2 = BitmapFactory.Options().apply { inSampleSize = scale }
         val bitmap = BitmapFactory.decodeFile(file.absolutePath, opts2)
-        val scaled = Bitmap.createScaledBitmap(
-            bitmap,
-            (bitmap.width.coerceAtMost(maxDim)),
-            (bitmap.height.coerceAtMost(maxDim)),
-            true
-        )
-        FileOutputStream(file).use { out ->
-            scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
+            ?: throw java.io.IOException("Failed to decode image")
+        
+        try {
+            val scaled = Bitmap.createScaledBitmap(
+                bitmap,
+                (bitmap.width.coerceAtMost(maxDim)),
+                (bitmap.height.coerceAtMost(maxDim)),
+                true
+            )
+            try {
+                FileOutputStream(file).use { out ->
+                    scaled.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                }
+            } finally {
+                if (scaled != bitmap) scaled.recycle()
+            }
+        } finally {
+            bitmap.recycle()
         }
         return file
     }

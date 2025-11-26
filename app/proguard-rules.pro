@@ -5,6 +5,20 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# Keep Parcelable classes
+-keep class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+    *;
+}
+
+# Keep data models used in Intents
+-keep class com.jody.freshfood.data.model.** { *; }
+
+# Kotlinx Parcelize
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
