@@ -302,18 +302,3 @@ Contributions are welcome! Here's how you can help:
 - Ensure all tests pass: `./gradlew test`
 - Follow existing code style
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues, questions, or contributions:
-
-- **Issues**: [GitHub Issues](https://github.com/JodyPutra-dev/FreshFood/issues)
-- **Documentation**: See [docs/](docs/) directory
-- **Troubleshooting**: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-
----
-
-**Built with ❤️ using Kotlin, TensorFlow Lite, and Node.js**
